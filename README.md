@@ -4,9 +4,9 @@
 Este proyecto simula el desarrollo de la infraestructura de datos y el panel analítico de un CRM personalizado (Custom CRM) para un entorno de ventas B2B. A diferencia de un análisis exploratorio tradicional basado en archivos estáticos, este repositorio implementa una **arquitectura relacional completa**, un **motor de procesamiento de reglas de negocio** y una **capa de visualización interactiva**. Está diseñado para transformar datos crudos en un sistema integral de toma de decisiones y gestión de clientes.
 
 ## Objectives
-*   **Arquitectura de Datos (Data Engineering):** Migrar datos planos (CSV) hacia una base de datos relacional (SQLite) garantizando la integridad referencial entre clientes, equipos de ventas y oportunidades.
-*   **Lógica de Negocio (Backend):** Desarrollar scripts modulares en Python que automaticen la limpieza de datos y ejecuten reglas de negocio (ej. cálculo de Lead Scoring, detección de oportunidades estancadas).
-*   **Visualización Interactiva (BI):** Construir un dashboard analítico que consulte directamente la base de datos para monitorear el embudo de ventas (Sales Funnel), la velocidad del pipeline y el rendimiento (Win Rate) del equipo.
+*   **Arquitectura de Datos (Data Engineering):** Migrar datos planos (CSV) hacia una base de datos relacional (SQLite) garantizando la integridad referencial entre empresas (Companies), contactos (Employees) y representantes de ventas (Sales Reps).
+*   **Lógica de Negocio (Backend):** Desarrollar scripts modulares en Python que automaticen la limpieza de datos y ejecuten reglas de negocio (ej. cálculo de Engagement Score, detección de contratos expirados).
+*   **Visualización Interactiva (BI):** Construir un dashboard analítico que consulte directamente la base de datos para monitorear el pipeline, la respuesta a campañas y el rendimiento del equipo.
 *   **Automatización:** Establecer un pipeline base que permita el mantenimiento fluido y la escalabilidad de la estructura del CRM.
 
 ## Tech Stack
@@ -18,12 +18,12 @@ Este proyecto simula el desarrollo de la infraestructura de datos y el panel ana
 
 ## Project Structure
 ```text
-├── data/               # Datasets originales B2B (CSV)
+├── data/               # Datasets originales B2B (empresas y empleados)
 ├── database/           # Archivo .db generado y scripts de migración
 ├── src/                # Código fuente modular
-│   ├── models.py       # Definición de clases y esquema SQL (SQLAlchemy)
+│   ├── models.py       # Definición de clases y esquema SQL (Companies, Employees, SalesReps)
 │   ├── processor.py    # Lógica de limpieza, formateo y carga inicial (ETL)
-│   └── business.py     # Lógica de negocio (Lead Scoring, cálculo de KPIs)
+│   └── business.py     # Lógica de negocio (Cálculo de KPIs y Scoring)
 ├── app/                # Frontend (Dashboard interactivo en Streamlit)
 ├── notebooks/          # Exploración inicial de datos y pruebas (EDA)
 ├── README.md           # Documentación principal del proyecto
