@@ -9,8 +9,14 @@ venv/
 database/*.db
 
 # Data
-data/*.csv
+data/**/*.csv
+
+# Jupyter
+*.ipynb
 
 # IDEs
 .vscode/
 .idea/
+
+# Journal
+JOURNAL.md
