@@ -3,6 +3,16 @@
 ## Project Overview
 Este proyecto simula el desarrollo de la infraestructura de datos y el panel analítico de un CRM personalizado (Custom CRM) para un entorno de ventas B2B. A diferencia de un análisis exploratorio tradicional basado en archivos estáticos, este repositorio implementa una **arquitectura relacional completa**, un **motor de procesamiento de reglas de negocio** y una **capa de visualización interactiva**. Está diseñado para transformar datos crudos en un sistema integral de toma de decisiones y gestión de clientes.
 
+## Business Problem
+Una empresa tecnológica B2B de tamaño mediano se enfrenta a problemas de fragmentación de datos. Su información comercial está dividida en múltiples archivos estáticos y desordenados: por un lado, métricas generales de las cuentas corporativas (empresas) y por otro, una lista masiva de los contactos individuales dentro de esas cuentas (empleados). 
+
+Esta desconexión genera problemas críticos para el negocio:
+1. **Falta de visibilidad:** Los líderes de ventas no pueden cruzar fácilmente el desempeño de las campañas de marketing corporativas con la tasa de respuesta individual de los tomadores de decisiones.
+2. **Oportunidades perdidas:** Los representantes de ventas carecen de un sistema automatizado que priorice a qué clientes contactar basándose en su nivel de influencia (*Contact Scoring*) o cuentas que corren riesgo de abandonar el servicio (*Churn Risk*).
+3. **Ineficiencia operativa:** Los analistas de datos pierden horas valiosas cada semana limpiando datos ruidosos y cruzando tablas manualmente en Excel para armar reportes estáticos.
+
+**La solución:** Migrar esta información fragmentada a una base de datos relacional centralizada mediante un pipeline automatizado (ETL). Sobre esta estructura sólida, construir un motor de reglas de negocio que alimente un Dashboard interactivo, dotando al equipo de ventas de inteligencia accionable en tiempo real.
+
 ## Objectives
 *   **Arquitectura de Datos (Data Engineering):** Migrar datos planos (CSV) hacia una base de datos relacional (SQLite) garantizando la integridad referencial entre empresas (Companies), contactos (Employees) y representantes de ventas (Sales Reps).
 *   **Lógica de Negocio (Backend):** Desarrollar scripts modulares en Python que automaticen la limpieza de datos y ejecuten reglas de negocio (ej. cálculo de Engagement Score, detección de contratos expirados).
