@@ -3,8 +3,10 @@ import plotly.express as px
 import os
 import sys
 
-# Agregar el directorio raíz al path para poder importar desde src/
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Agregar el directorio raíz y src al path para resolver importaciones internas de la carpeta src
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(root_dir)
+sys.path.append(os.path.join(root_dir, 'src'))
 from src.business import CRMManager
 
 # Configuración básica de la página
