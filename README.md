@@ -1,7 +1,8 @@
 # B2B Custom CRM Intelligence
 
 ## Project Overview
-Este proyecto simula el desarrollo de la infraestructura de datos y el panel analítico de un CRM personalizado (Custom CRM) para un entorno de ventas B2B. A diferencia de un análisis exploratorio tradicional basado en archivos estáticos, este repositorio implementa una **arquitectura relacional completa**, un **motor de procesamiento de reglas de negocio** y una **capa de visualización interactiva**. Está diseñado para transformar datos crudos en un sistema integral de toma de decisiones y gestión de clientes.
+Este repositorio implementa la infraestructura de datos y el panel analítico de un **CRM B2B personalizado**. A diferencia de un análisis exploratorio tradicional basado en archivos planos estáticos, este proyecto consolida un pipeline ETL modular que limpia y migra bases de datos ruidosas hacia una **arquitectura relacional sólida** (SQLite/SQLAlchemy ORM). Sobre este motor se procesa la inteligencia del negocio en Python (**Rep Performance, Contact Scoring y At-Risk Accounts**) y se visualizan los hallazgos en tiempo real a través de un **dashboard interactivo** de Streamlit y Plotly.
+
 
 ## Business Problem
 Una empresa tecnológica B2B de tamaño mediano se enfrenta a problemas de fragmentación de datos. Su información comercial está dividida en múltiples archivos estáticos y desordenados: por un lado, métricas generales de las cuentas corporativas (empresas) y por otro, una lista masiva de los contactos individuales dentro de esas cuentas (empleados). 
