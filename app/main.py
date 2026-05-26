@@ -122,8 +122,79 @@ def main():
         st.plotly_chart(fig_risk, use_container_width=True)
 
 
-    st.subheader("Inteligencia Accionable")
-    st.info("Las tablas de priorización y riesgo se agregarán aquí.")
+    st.subheader("Actionable Intelligence")
+    
+    # Fetch data
+    contact_df = manager.calculate_contact_scoring()
+    risk_df = manager.identify_at_risk_accounts()
+    
+    # Create tabbed layout
+    tab1, tab2 = st.tabs([
+        "🎯 High-Value Contacts (Priority Call List)", 
+        "⚠️ At-Risk Accounts (Churn Prevention)"
+    ])
+    
+    with tab1:
+        st.markdown("### Top Contacts by Influence & Campaign Engagement")
+        st.caption("Focus your outreach on these high-influence decision makers with proven campaign response rates.")
+        
+        # Prepare for display
+        display_contacts = contact_df[[
+            'name', 'job_title', 'industry', 'decision_maker_flag', 'owner_rep', 'score'
+        ]].copy()
+        display_contacts.columns = [
+            'Contact Name', 'Job Title', 'Industry', 'Decision Maker', 'Sales Rep', 'Engagement Score'
+        ]
+        
+        # Render interactive table with custom progress bar config
+        st.dataframe(
+            display_contacts,
+            use_container_width=True,
+            column_config={
+                "Engagement Score": st.column_config.ProgressColumn(
+                    "Engagement Score",
+                    help="Engagement Score calculated based on influence score, response rate, and decision-maker status.",
+                    format="%.1f",
+                    min_value=0,
+                    max_value=100
+                ),
+                "Decision Maker": st.column_config.TextColumn(
+                    "Decision Maker",
+                    help="Indicates if the contact is a primary decision maker."
+                )
+            },
+            hide_index=True
+        )
+        
+    with tab2:
+        st.markdown("### Accounts Requiring Immediate Attention")
+        st.caption("These accounts have expired or pending contracts with no recent purchase activity, or purchase rarely.")
+        
+        # Prepare for display
+        display_risk = risk_df[[
+            'company_id', 'industry', 'contract_status', 'days_since_last_purchase', 'frequency_of_purchase', 'annual_revenue', 'sales_rep'
+        ]].copy()
+        display_risk.columns = [
+            'Company ID', 'Industry', 'Contract Status', 'Days Since Last Purchase', 'Purchase Frequency', 'Annual Revenue ($M)', 'Sales Rep'
+        ]
+        
+        # Render interactive table with beautiful formatting
+        st.dataframe(
+            display_risk,
+            use_container_width=True,
+            column_config={
+                "Annual Revenue ($M)": st.column_config.NumberColumn(
+                    "Annual Revenue ($M)",
+                    format="$%.2fM"
+                ),
+                "Days Since Last Purchase": st.column_config.NumberColumn(
+                    "Days Since Last Purchase",
+                    format="%d days"
+                )
+            },
+            hide_index=True
+        )
+
 
 if __name__ == "__main__":
     main()
