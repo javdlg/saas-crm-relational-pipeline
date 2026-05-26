@@ -115,6 +115,28 @@ class CRMManager:
         df = pd.read_sql_query(query, self.engine)
         return df
 
+    def get_general_kpis(self):
+        """
+        Calculates high-level metrics for the CRM:
+        - total_companies: total number of accounts
+        - active_companies: accounts with contract_status = 'Active'
+        - total_revenue: sum of annual_revenue of active accounts (in Millions)
+        - total_contacts: total number of employees
+        Returns a dictionary.
+        """
+        total_companies = int(pd.read_sql_query("SELECT COUNT(*) AS count FROM companies", self.engine).iloc[0]['count'])
+        active_companies = int(pd.read_sql_query("SELECT COUNT(*) AS count FROM companies WHERE contract_status = 'Active'", self.engine).iloc[0]['count'])
+        total_revenue = float(pd.read_sql_query("SELECT SUM(annual_revenue) AS revenue FROM companies WHERE contract_status = 'Active'", self.engine).iloc[0]['revenue'] or 0.0)
+        total_contacts = int(pd.read_sql_query("SELECT COUNT(*) AS count FROM employees", self.engine).iloc[0]['count'])
+        
+        return {
+            'total_companies': total_companies,
+            'active_companies': active_companies,
+            'total_revenue': round(total_revenue, 2),
+            'total_contacts': total_contacts
+        }
+
+
 
 if __name__ == '__main__':
     # Test the CRM Manager logic

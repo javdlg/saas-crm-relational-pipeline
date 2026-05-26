@@ -35,8 +35,39 @@ def main():
     st.sidebar.header("⚙️ Panel de Filtros")
     st.sidebar.info("Los filtros interactivos se agregarán aquí.")
 
-    st.subheader("Indicadores Clave de Rendimiento (KPIs)")
-    st.info("Las tarjetas de KPIs se agregarán aquí.")
+    st.subheader("Key Performance Indicators (KPIs)")
+    kpis = manager.get_general_kpis()
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric(
+            label="Total Accounts", 
+            value=f"{kpis['total_companies']:,}",
+            help="Total number of B2B client companies in the database."
+        )
+    with col2:
+        # Calculate percentage of active accounts
+        active_pct = (kpis['active_companies'] / kpis['total_companies'] * 100) if kpis['total_companies'] > 0 else 0
+        st.metric(
+            label="Active Accounts", 
+            value=f"{kpis['active_companies']:,}",
+            delta=f"{active_pct:.1f}% of total",
+            delta_color="normal",
+            help="Accounts with an 'Active' contract status."
+        )
+    with col3:
+        st.metric(
+            label="Active Annual Revenue", 
+            value=f"${kpis['total_revenue']:.2f}M",
+            help="Sum of annual revenue from active contracts."
+        )
+    with col4:
+        st.metric(
+            label="Total Contacts", 
+            value=f"{kpis['total_contacts']:,}",
+            help="Total number of employees (contacts) registered across all companies."
+        )
+
 
     st.subheader("Análisis de Rendimiento y Riesgo")
     st.info("Los gráficos de Plotly se agregarán aquí.")
