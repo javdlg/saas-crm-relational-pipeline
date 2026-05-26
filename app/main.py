@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 import os
 import sys
 
@@ -69,8 +70,57 @@ def main():
         )
 
 
-    st.subheader("Análisis de Rendimiento y Riesgo")
-    st.info("Los gráficos de Plotly se agregarán aquí.")
+    st.subheader("Performance & Risk Analysis")
+    
+    rep_df = manager.calculate_rep_performance()
+    status_df = manager.get_contract_status_distribution()
+    
+    chart_col1, chart_col2 = st.columns(2)
+    
+    with chart_col1:
+        # 1. Horizontal Bar Chart of Active Revenue by Sales Rep
+        fig_rep = px.bar(
+            rep_df,
+            x='active_revenue_m',
+            y='sales_rep',
+            orientation='h',
+            title="Active Annual Revenue by Sales Representative ($M)",
+            labels={'active_revenue_m': 'Active Revenue ($M)', 'sales_rep': 'Sales Rep'},
+            color='active_revenue_m',
+            color_continuous_scale='Blues',
+            text_auto='.2f'
+        )
+        fig_rep.update_layout(
+            yaxis={'categoryorder': 'total ascending'},
+            showlegend=False,
+            coloraxis_showscale=False,
+            margin=dict(l=20, r=20, t=40, b=20),
+            height=400
+        )
+        st.plotly_chart(fig_rep, use_container_width=True)
+        
+    with chart_col2:
+        # 2. Donut Chart of Contract Status (Risk Distribution)
+        fig_risk = px.pie(
+            status_df,
+            names='contract_status',
+            values='count',
+            hole=0.4,
+            title="Accounts by Contract Status (Risk Profile)",
+            color='contract_status',
+            color_discrete_map={
+                'Active': '#2b5c8f',    # Premium Navy/Blue
+                'Pending': '#e6a100',   # Premium Amber
+                'Expired': '#c93b2b'    # Premium Crimson/Red
+            }
+        )
+        fig_risk.update_layout(
+            margin=dict(l=20, r=20, t=40, b=20),
+            height=400,
+            legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5)
+        )
+        st.plotly_chart(fig_risk, use_container_width=True)
+
 
     st.subheader("Inteligencia Accionable")
     st.info("Las tablas de priorización y riesgo se agregarán aquí.")

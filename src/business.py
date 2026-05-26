@@ -136,6 +136,23 @@ class CRMManager:
             'total_contacts': total_contacts
         }
 
+    def get_contract_status_distribution(self):
+        """
+        Calculates the distribution of contract statuses among all companies.
+        Returns a Pandas DataFrame.
+        """
+        query = """
+        SELECT 
+            contract_status,
+            COUNT(*) AS count,
+            SUM(annual_revenue) AS total_revenue
+        FROM companies
+        GROUP BY contract_status;
+        """
+        df = pd.read_sql_query(query, self.engine)
+        return df
+
+
 
 
 if __name__ == '__main__':
