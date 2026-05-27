@@ -15,7 +15,8 @@ Esta desconexión genera problemas críticos para el negocio:
 **La solución:** Migrar esta información fragmentada a una base de datos relacional centralizada mediante un pipeline automatizado (ETL). Sobre esta estructura sólida, construir un motor de reglas de negocio que alimente un Dashboard interactivo, dotando al equipo de ventas de inteligencia accionable en tiempo real.
 
 ## Objectives
-*   **Arquitectura de Datos (Data Engineering):** Migrar datos planos (CSV) hacia una base de datos relacional (SQLite) garantizando la integridad referencial entre empresas (Companies), contactos (Employees) y representantes de ventas (Sales Reps).
+*   **Exploración de Datos (Data Science):** Diseñar y ejecutar un análisis exploratorio de datos (EDA) dentro de Jupyter Notebooks para diagnosticar problemas de calidad, nulos, asimetrías y errores ortográficos antes de consolidar el pipeline.
+*   **Arquitectura de Datos (Data Engineering):** Migrar datos planos (CSV) hacia una base de datos relacional (SQLite) garantizando la integridad referencial entre empresas (Companies), contactos (Employees) y representantes de ventas (Sales Reps) mediante SQLAlchemy ORM.
 *   **Lógica de Negocio (Backend):** Desarrollar scripts modulares en Python que automaticen la limpieza de datos y ejecuten reglas de negocio (ej. cálculo de Engagement Score, detección de contratos expirados).
 *   **Visualización Interactiva (BI):** Construir un dashboard analítico que consulte directamente la base de datos para monitorear el pipeline, la respuesta a campañas y el rendimiento del equipo.
 *   **Automatización:** Establecer un pipeline base que permita el mantenimiento fluido y la escalabilidad de la estructura del CRM.
@@ -36,6 +37,7 @@ Esta desconexión genera problemas críticos para el negocio:
 │   ├── processor.py    # Lógica de limpieza, formateo y carga inicial (ETL)
 │   └── business.py     # Lógica de negocio (Cálculo de KPIs y Scoring)
 ├── app/                # Frontend (Dashboard interactivo en Streamlit)
-├── notebooks/          # Exploración inicial de datos y pruebas (EDA)
+├── notebooks/          # Exploración de datos e hipótesis
+│   └── eda_exploration.ipynb  # Notebook Jupyter con el análisis exploratorio y detección de ruido
 ├── README.md           # Documentación principal del proyecto
 └── requirements.txt    # Dependencias de Python
