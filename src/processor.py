@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import difflib
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -34,6 +35,23 @@ def safe_int(val):
         return int(float(val))
     except (ValueError, TypeError):
         return None
+
+CLEAN_INDUSTRIES = [
+    'Aerospace', 'Buildings', 'Data Centres', 'Food & Beverage', 'Healthcare', 
+    'Machine Building', 'Mining, Metals & Minerals', 'Oil & Gas', 
+    'Residential', 'Utilities', 'Vehicles'
+]
+
+def clean_industry(val):
+    """Limpia y normaliza de forma segura la industria mediante coincidencia difusa."""
+    if pd.isna(val):
+        return None
+    val_str = str(val).strip()
+    matches = difflib.get_close_matches(val_str, CLEAN_INDUSTRIES, n=1, cutoff=0.4)
+    if matches:
+        return matches[0]
+    return val_str.title()
+
 
 def process_and_load():
     """Función principal ETL: Extrae, Transforma y Carga los datos."""
@@ -95,7 +113,7 @@ def process_and_load():
 
         company = Company(
             company_id=comp_id,
-            industry=str(row['Industry']).strip() if pd.notna(row['Industry']) else None,
+            industry=clean_industry(row['Industry']),
             company_size=str(row['Company_Size']).strip() if pd.notna(row['Company_Size']) else None,
             annual_revenue=safe_float(row['Annual_Revenue (M₺)']),
             marketing_spend=safe_float(row['Marketing_Spend (K₺)']),
