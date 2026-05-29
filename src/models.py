@@ -52,7 +52,7 @@ class Company(Base):
     preferred_channel = Column(String, nullable=True)
     
     # Foreign Key
-    sales_rep_id = Column(Integer, ForeignKey('sales_reps.id'), nullable=True)
+    sales_rep_id = Column(Integer, ForeignKey('sales_reps.id'), nullable=True, index=True)
     
     # Relationships
     sales_rep = relationship("SalesRep", back_populates="companies")
@@ -92,8 +92,8 @@ class Employee(Base):
     data_source = Column(String, nullable=True)
     
     # Foreign Keys
-    company_id_fk = Column(Integer, ForeignKey('companies.id'), nullable=True)
-    owner_rep_id = Column(Integer, ForeignKey('sales_reps.id'), nullable=True)
+    company_id_fk = Column(Integer, ForeignKey('companies.id'), nullable=True, index=True)
+    owner_rep_id = Column(Integer, ForeignKey('sales_reps.id'), nullable=True, index=True)
     
     # Relationships
     company = relationship("Company", back_populates="employees")

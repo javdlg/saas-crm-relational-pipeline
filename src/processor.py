@@ -4,10 +4,10 @@ import difflib
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Importamos los modelos que creamos previamente
+# Import models defined in models.py
 from models import Base, SalesRep, Company, Employee
 
-# Definimos rutas relativas
+# Define relative file paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_DIR = os.path.join(BASE_DIR, 'database')
 DB_PATH = f"sqlite:///{os.path.join(DB_DIR, 'crm_custom.db')}"
@@ -15,27 +15,28 @@ COMPANIES_CSV = os.path.join(BASE_DIR, 'data', 'raw', 'companies_noisy_734.csv')
 EMPLOYEES_CSV = os.path.join(BASE_DIR, 'data', 'raw', 'employees_noisy_5234.csv')
 
 def setup_database():
-    """Crea el directorio de la BD si no existe y genera las tablas."""
+    """Creates the database directory if it does not exist and generates schemas."""
     os.makedirs(DB_DIR, exist_ok=True)
     engine = create_engine(DB_PATH)
-    # Crea todas las tablas definidas en models.py
+    # Generate all tables defined in models.py
     Base.metadata.create_all(engine)
     return engine
 
 def safe_float(val):
-    """Convierte de forma segura un valor a float manejando ruido."""
+    """Safely converts a value to float while handling noise."""
     try:
         return float(val)
     except (ValueError, TypeError):
         return None
 
 def safe_int(val):
-    """Convierte de forma segura un valor a int manejando ruido."""
+    """Safely converts a value to integer while handling noise."""
     try:
         return int(float(val))
     except (ValueError, TypeError):
         return None
 
+# List of normalized standard B2B industries
 CLEAN_INDUSTRIES = [
     'Aerospace', 'Buildings', 'Data Centres', 'Food & Beverage', 'Healthcare', 
     'Machine Building', 'Mining, Metals & Minerals', 'Oil & Gas', 
@@ -43,7 +44,7 @@ CLEAN_INDUSTRIES = [
 ]
 
 def clean_industry(val):
-    """Limpia y normaliza de forma segura la industria mediante coincidencia difusa."""
+    """Safely cleans and normalizes industry sectors using fuzzy string matching."""
     if pd.isna(val):
         return None
     val_str = str(val).strip()
@@ -52,59 +53,57 @@ def clean_industry(val):
         return matches[0]
     return val_str.title()
 
-
 def process_and_load():
-    """Función principal ETL: Extrae, Transforma y Carga los datos."""
-    print("Iniciando proceso ETL...")
+    """Main ETL Function: Extracts, Transforms, and Loads corporate datasets."""
+    print("Starting ETL process...")
     engine = setup_database()
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # --- 1. EXTRAER (Extract) ---
-    print("Leyendo archivos CSV...")
+    # --- 1. EXTRACT ---
+    print("Reading raw CSV source files...")
     companies_df = pd.read_csv(COMPANIES_CSV)
     employees_df = pd.read_csv(EMPLOYEES_CSV)
 
-    # --- 2. TRANSFORMAR (Transform) ---
-    print("Limpiando y transformando datos...")
+    # --- 2. TRANSFORM ---
+    print("Cleaning and transforming data structures...")
     
-    # Eliminar filas donde el ID principal sea nulo (datos corruptos)
+    # Drop records where primary business keys are null (corrupt rows)
     companies_df.dropna(subset=['Company_ID'], inplace=True)
     employees_df.dropna(subset=['Employee_ID'], inplace=True)
 
-    # Normalizar valores de texto (eliminar espacios extra)
+    # Standardize string fields by stripping whitespace padding
     companies_df['Company_ID'] = companies_df['Company_ID'].astype(str).str.strip()
     employees_df['Employee_ID'] = employees_df['Employee_ID'].astype(str).str.strip()
     companies_df['Sales_Rep'] = companies_df['Sales_Rep'].astype(str).str.strip()
     employees_df['Owner_Rep'] = employees_df['Owner_Rep'].astype(str).str.strip()
 
-    # Extraer todos los representantes de ventas únicos para poblar la tabla 'sales_reps'
+    # Consolidate a set of unique sales representatives across both datasets
     reps_companies = companies_df['Sales_Rep'].dropna().unique()
     reps_employees = employees_df['Owner_Rep'].dropna().unique()
     
-    # Unir ambos sets y filtrar los "nan" o vacíos
     all_reps = set(reps_companies).union(set(reps_employees))
     all_reps = {rep for rep in all_reps if rep.lower() != 'nan' and rep != ''}
 
-    # --- 3. CARGAR (Load) ---
-    print("Cargando datos en la base de datos relacional...")
+    # --- 3. LOAD ---
+    print("Loading datasets into the relational database engine...")
 
-    # Cargar SalesReps
+    # Populate SalesReps
     for rep_name in all_reps:
-        # Verificar si ya existe
+        # Check if record already exists in database
         if not session.query(SalesRep).filter_by(name=rep_name).first():
             session.add(SalesRep(name=rep_name))
     session.commit()
 
-    # Diccionario para mapear nombre del representante a su ID en la BD
+    # Map representative names to database integer primary keys
     reps_db = session.query(SalesRep).all()
     rep_id_map = {rep.name: rep.id for rep in reps_db}
 
-    # Cargar Companies
+    # Populate Companies
     for _, row in companies_df.iterrows():
         comp_id = row['Company_ID']
         
-        # Evitar duplicados
+        # Avoid duplicate insertions
         if session.query(Company).filter_by(company_id=comp_id).first():
             continue
             
@@ -135,15 +134,15 @@ def process_and_load():
         session.add(company)
     session.commit()
 
-    # Diccionario para mapear el ID string de la compañía a su clave primaria entera en la BD
+    # Map company string IDs to database primary keys (for foreign key lookup)
     companies_db = session.query(Company).all()
     comp_id_map = {c.company_id: c.id for c in companies_db}
 
-    # Cargar Employees (Contacts)
+    # Populate Employees (Contacts)
     for _, row in employees_df.iterrows():
         emp_id = row['Employee_ID']
         
-        # Evitar duplicados
+        # Avoid duplicate insertions
         if session.query(Employee).filter_by(employee_id=emp_id).first():
             continue
             
@@ -179,7 +178,7 @@ def process_and_load():
         session.add(employee)
     session.commit()
 
-    print("¡Proceso ETL completado con éxito! Base de datos inicializada y poblada.")
+    print("ETL process completed successfully! Relational database populated and clean.")
 
 if __name__ == '__main__':
     process_and_load()

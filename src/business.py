@@ -157,7 +157,7 @@ class CRMManager:
 
 if __name__ == '__main__':
     # Test the CRM Manager logic
-    print("Iniciando CRM Manager...")
+    print("Starting CRM Manager...")
     try:
         manager = CRMManager()
         
@@ -173,6 +173,6 @@ if __name__ == '__main__':
         risk_df = manager.identify_at_risk_accounts()
         print(risk_df.head())
         
-        print("\n[OK] Lógica de negocio ejecutada correctamente.")
+        print("\n[OK] Business logic executed successfully.")
     except Exception as e:
-        print(f"Error al ejecutar CRMManager: {e}")
+        print(f"Error executing CRMManager: {e}")
